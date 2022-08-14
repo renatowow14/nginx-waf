@@ -11,8 +11,6 @@ ModSecurity is an open source, cross platform Web Application Firewall (WAF) eng
 
 ## How to use this image
 
-This image only contains ModSecurity built from the code provided on the [ModSecurity Github Repo](https://github.com/SpiderLabs/ModSecurity). **THE CORE RULE SET IS NOT PROVIDED IN THIS IMAGE**, but it should not be hard to extend. On the other hand, **IF YOU WANT MODSECURITY WITH THE CORE RULE SET please visit the [OWASP Core Rule Set (CRS) DockerHub Repo](https://hub.docker.com/r/owasp/modsecurity-crs/)**.
-
 1. Create a Dockerfile in your project and copy your code into container.
    ```
    docker-compose up -d 
