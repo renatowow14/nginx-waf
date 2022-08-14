@@ -1,10 +1,5 @@
 # ModSecurity Docker Image
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fcoreruleset%2Fmodsecurity-docker%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/coreruleset/modsecurity-docker/goto?ref=master
-) [![GitHub issues](https://img.shields.io/github/issues-raw/coreruleset/modsecurity-docker.svg)](https://github.com/coreruleset/modsecurity-docker/issues
-) [![GitHub PRs](https://img.shields.io/github/issues-pr-raw/coreruleset/modsecurity-docker.svg)](https://github.com/coreruleset/modsecurity-docker/pulls
-) [![License](https://img.shields.io/github/license/coreruleset/modsecurity-docker.svg)](https://github.com/coreruleset/modsecurity-docker/blob/master/LICENSE)
-
 ## What is ModSecurity
 
 ModSecurity is an open source, cross platform Web Application Firewall (WAF) engine for Apache, IIS and Nginx. It has a robust event-based programming language which provides protection from a range of attacks against web applications and allows for HTTP traffic monitoring, logging and real-time analysis.
