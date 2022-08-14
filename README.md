@@ -1,7 +1,5 @@
 # ModSecurity Docker Image
 
-[![dockeri.co](http://dockeri.co/image/owasp/modsecurity)](https://hub.docker.com/r/owasp/modsecurity/)
-
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fcoreruleset%2Fmodsecurity-docker%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/coreruleset/modsecurity-docker/goto?ref=master
 ) [![GitHub issues](https://img.shields.io/github/issues-raw/coreruleset/modsecurity-docker.svg)](https://github.com/coreruleset/modsecurity-docker/issues
 ) [![GitHub PRs](https://img.shields.io/github/issues-pr-raw/coreruleset/modsecurity-docker.svg)](https://github.com/coreruleset/modsecurity-docker/pulls
