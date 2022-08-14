@@ -15,60 +15,10 @@ This image only contains ModSecurity built from the code provided on the [ModSec
 
 1. Create a Dockerfile in your project and copy your code into container.
    ```
-   FROM owasp/modsecurity:apache
-   COPY ./public-html/ .
+   docker-compose up -d 
    ```
 
-2. run the commands to build and run the Docker image.
-   ```
-   $ docker build -t my-modsec .
-   $ docker run -p 8080:80 my-modsec
-   ```
-
-3. Visit http://localhost:8080 and your page.
-
-### Nginx based images breaking change
-
-| ⚠️ WARNING          |
-|:---------------------------|
-| Nginx based images are now based on upstream nginx. This changed the way the config file for nginx is generated.  |
-
-If using the [Nginx environment variables](https://github.com/coreruleset/modsecurity-docker#nginx-env-variables) is not enough for your use case, you can mount your own `nginx.conf` file as the new template for generating the base config.
-
-An example can be seen in the [docker-compose](https://github.com/coreruleset/modsecurity-docker/blob/master/docker-compose.yml) file.
-
-> 💬 What happens if I want to make changes in a different file, like `/etc/nginx/conf.d/default.conf`?
-> You mount your local file, e.g. `nginx/default.conf` as the new template: `/etc/nginx/templates/conf.d/default.conf.template`. You can do this similarly with other files. Files in the templates directory will be copied and subdirectories will be preserved.
-
-### TLS/HTTPS
-
-The TLS is configured by default on port 443. Note: The default configuration uses self signed certificates, to use your own certificates (recommended) COPY or mount (-v) your server.crt and server.key into `/usr/local/apache2/conf/`. Please remember you'll need to forward the HTTPS port.
-
-```
-$ docker build -t my-modsec .
-$ docker run -p 8443:443 my-modsec
-```
-
-We use sane intermediate defaults taken from the [Mozilla SSL config tool](https://ssl-config.mozilla.org/). Please check it and choose the best that match your needs.
-
-You can use variables on nginx and apache to always redirect from http to https if needed (see APACHE_ALWAYS_TLS_REDIRECT and NGINX_ALWAYS_TLS_REDIRECT below).
-
-### Proxying
-
-ModSecurity is often used as a reverse proxy. This allows one to use ModSecurity without modifying the webserver hosting the underlying application (and also protect web servers that modsecurity cannot currently embedd into). The proxy is set by default to true and the location is defined by BACKEND environment variable. The SSL is enabled by default.
-
-```
-$ docker build -t my-modsec . -f
-$ docker run -p 8080:80 -e PROXY_SSL=on -e BACKEND=http://example.com my-modsec
-```
-
-### ServerName
-
-It is often convenient to set your servername. To do this simply use the `SERVER_NAME` environment variable passed to docker run. By default the servername provided is `localhost`.
-```
-$ docker build -t modsec .
-$ docker run -p 8080:80 -e SERVER_NAME=myhost my-modsec
-```
+3. Visit http://localhost:80 and your page.
 
 ### Nginx ENV Variables
 

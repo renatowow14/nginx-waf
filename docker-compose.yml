@@ -1,22 +1,20 @@
 version: '3'
+
 services:
-  
+
   nginx-waf:
     build:
       context: .
-      dockerfile: v3-nginx/Dockerfile
+      dockerfile: Dockerfile
     environment:
-      BACKEND: http://backend # https://httpbin.org
-      PORT: "8080"
-      SSL_PORT: "4443"
+      PORT: "80"
+      SSL_PORT: "443"
       DNS_SERVER: "1.1.1.1"
       METRICS_ALLOW_FROM: all
     ports:
-      - "8081:8080"
-      - "4444:4443"
+      - "80:80"
+      - "443:443"
     user: "10001"
-    depends_on:
-      - backend
     # If you need to modify nginx config, mount your volume as the template file
     # volumes:
     #  - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:rw
