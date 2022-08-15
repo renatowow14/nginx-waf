@@ -81,3 +81,12 @@ All these variables impact in configuration directives in the modsecurity engine
 | MODSEC_UPLOAD_DIR  | A string indicating the path where intercepted files will be stored (Default: `/tmp/modsecurity/upload`) | 
 | MODSEC_DEFAULT_PHASE1_ACTION | ModSecurity string with the contents for the default action in phase 1 (Default: `'phase:1,log,auditlog,pass,tag:\'\${MODSEC_TAG}\''`) |
 | MODSEC_DEFAULT_PHASE2_ACTION | ModSecurity string with the contents for the default action in phase 2 (Default: `'phase:2,log,auditlog,pass,tag:\'\${MODSEC_TAG}\''`) |
+
+### Referencies
+
+ ```
+https://github.com/coreruleset/modsecurity-docker
+ ```
+ ``` 
+https://github.com/coreruleset/coreruleset
+ ```
