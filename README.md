@@ -1,4 +1,4 @@
-# ModSecurity Docker Image
+# Nginx and ModSecurity Docker Image
 
 ## What is ModSecurity
 
