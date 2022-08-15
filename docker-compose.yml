@@ -14,7 +14,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    user: "10001"
     # If you need to modify nginx config, mount your volume as the template file
     # volumes:
     #  - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:rw
