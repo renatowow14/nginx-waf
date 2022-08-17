@@ -6,14 +6,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: bash -c "/usr/sbin/cron -f && /bin/bash"  
     environment:
       PORT: "80"
       SSL_PORT: "443"
       DNS_SERVER: "1.1.1.1"
       METRICS_ALLOW_FROM: all
+    stdin_open: true
+    tty: true  
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - '/etc/localtime:/etc/localtime'
+      - './src/etc/nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:rw'
     # If you need to modify nginx config, mount your volume as the template file
     # volumes:
     #  - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:rw

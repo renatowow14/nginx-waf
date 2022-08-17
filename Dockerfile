@@ -92,7 +92,11 @@ RUN openssl dhparam -out /usr/share/TLS/dhparam-1024.pem 1024
 RUN curl -sSL https://ssl-config.mozilla.org/ffdhe2048.txt -o /usr/share/TLS/dhparam-2048.pem
 RUN curl -sSL https://ssl-config.mozilla.org/ffdhe4096.txt -o /usr/share/TLS/dhparam-4096.pem
 
-FROM nginx:${NGINX_VERSION}
+###############################################################################################
+
+FROM nginx:${NGINX_VERSION} as runner 
+
+WORKDIR /etc/nginx
 
 ARG MODSEC_VERSION=3.0.7 \
     YAJL_VERSION=2.1.0 \
@@ -159,6 +163,10 @@ ENV ACCESSLOG=/var/log/nginx/access.log \
     LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib \
     NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
 
+# Add crontab file in the cron directory
+COPY ./src/etc/cron.d/crontab /etc/cron.d/hello-cron
+COPY ./src/etc/cron.d/entrypoint.sh /APP/entrypoint.sh
+
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
@@ -166,6 +174,8 @@ RUN set -eux; \
         libcurl4-gnutls-dev \
         liblua5.3 \
         libxml2 \
+        cron \  
+        systemd \
         moreutils; \
     rm -rf /var/lib/apt/lists/*; \
     apt-get clean; \
@@ -174,7 +184,18 @@ RUN set -eux; \
     mkdir -p /tmp/modsecurity/upload; \
     mkdir -p /tmp/modsecurity/tmp; \
     mkdir -p /usr/local/modsecurity; \
-    chown -R nginx:nginx /tmp/modsecurity
+    chown -R nginx:nginx /tmp/modsecurity && \ 
+    #Personalized:
+    chmod 0644 /etc/cron.d/hello-cron && touch /var/log/cron.log && \
+    adduser --system --no-create-home --shell /bin/false --group --disabled-login nginx && \
+    mkdir -p /var/log/nginx && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    echo "43 6 * * * certbot renew --post-hook "/etc/init.d/nginx reload"" >> /etc/crontab && \
+    rm -rfv /var/log/nginx/access.log &&  rm -rfv /var/log/nginx/error.log && \ 
+    touch /var/log/nginx/access.log &&  touch /var/log/nginx/error.log && \
+    chown -R www-data:www-data /var/log/nginx && \
+    echo "America/Sao_Paulo" > /etc/timezone  
+
 
 COPY --from=build /usr/local/modsecurity/lib/libmodsecurity.so.${MODSEC_VERSION} /usr/local/modsecurity/lib/
 COPY --from=build /usr/local/lib/libfuzzy.so.${FUZZY_VERSION} /usr/local/lib/
@@ -200,7 +221,8 @@ RUN set -eux; \
     ln -s /usr/local/lib/libyajl.so.${YAJL_VERSION} /usr/local/lib/libyajl.so; \
     ln -s /usr/local/lib/libyajl.so.${YAJL_VERSION} /usr/local/lib/libyajl.so.2; \
     chgrp -R 0 /var/cache/nginx/ /var/log/ /var/run/ /usr/share/nginx/ /etc/nginx/ /etc/modsecurity.d/; \
-    chmod -R g=u /var/cache/nginx/ /var/log/ /var/run/ /usr/share/nginx/ /etc/nginx/ /etc/modsecurity.d/
+    chmod -R g=u /var/cache/nginx/ /var/log/ /var/run/ /usr/share/nginx/ /etc/nginx/ /etc/modsecurity.d/ && \
+    chmod +x /APP/entrypoint.sh
 
 #https://coreruleset.org/installation/
 #Install and Configure CoreRuleSet
@@ -217,6 +239,7 @@ RUN set -eux; \
       screen \
       net-tools \
       procps \
+      python3-certbot-nginx \
       gnupg; \
     mkdir /opt/owasp-crs; \
     curl -SL https://github.com/coreruleset/coreruleset/archive/v${RELEASE}.tar.gz -o v${RELEASE}.tar.gz; \
@@ -245,5 +268,8 @@ COPY v3-nginx/templates /etc/nginx/templates/
 COPY src/etc/modsecurity.d/setup.conf /etc/nginx/templates/modsecurity.d/setup.conf.template
 COPY v3-nginx/docker-entrypoint.d/*.sh /docker-entrypoint.d/
 COPY src/opt/modsecurity/activate-rules.sh /docker-entrypoint.d/95-activate-rules.sh
+COPY src/etc/nginx/nginx.conf /etc/nginx/templates/nginx.conf.template
 
-RUN  set -eux; ln -sv /opt/owasp-crs /etc/modsecurity.d/
+RUN  set -eux; ln -sv /opt/owasp-crs /etc/modsecurity.d/ && bash -c "/docker-entrypoint.sh nginx"
+
+COPY src/etc/nginx/location_common.conf /etc/nginx/includes/location_common.conf

@@ -1,4 +1,4 @@
-# Nginx and ModSecurity on Docker 
+# Nginx + ModSecurity + Crontab Scheduler on Docker 
 
 ![image](https://www.nginx.com/wp-content/uploads/2017/08/blog-fm-2017-modsecurity-featured-500x300.png)
 
@@ -10,13 +10,37 @@ ModSecurity is an open source, cross platform Web Application Firewall (WAF) eng
 
 NGINX is open source software for web serving, reverse proxying, caching, load balancing, media streaming, and more. It started out as a web server designed for maximum performance and stability. In addition to its HTTP server capabilities, NGINX can also function as a proxy server for email (IMAP, POP3, and SMTP) and a reverse proxy and load balancer for HTTP, TCP, and UDP servers.
 
+## What is Cron ?
+
+The cron command-line utility is a job scheduler on Unix-like operating systems. Users who set up and maintain software environments use cron to schedule jobs (commands or shell scripts), also known as cron jobs,to run periodically at fixed times, dates, or intervals.It typically automates system maintenance or administration—though its general-purpose nature makes it useful for things like downloading files from the Internet and downloading email at regular intervals.
+
+### Custom Nginx Definitions
+
+| ⚠️ WARNING          |
+|:---------------------------|
+| Nginx based images are now based on upstream nginx. This changed the way the config file for nginx is generated.  |
+
+If using the [Nginx environment variables](https://github.com/coreruleset/modsecurity-docker#nginx-env-variables) is not enough for your use case, you can mount your own `nginx.conf` file as the new template for generating the base config.
+
+An example can be seen in the [docker-compose](https://github.com/coreruleset/modsecurity-docker/blob/master/docker-compose.yml) file.
+
+> 💬 What happens if I want to make changes in a different file, like `/etc/nginx/conf.d/default.conf`?
+> You mount your local file, e.g. `nginx/default.conf` as the new template: `/etc/nginx/templates/conf.d/default.conf.template`. You can do this similarly with other files. Files in the templates directory will be copied and subdirectories will be preserved.
+
 ## How to use this image
 
-1. Create a Dockerfile in your project and copy your code into container.
-   ```
-   docker-compose up -d 
-   ```
+1. Set your custom cron schedules in :
 
+```
+   src/etc/cron.d/crontab == Definition of scheduling
+   src/etc/cron.d/entrypoint.sh == Shell Script that will be run on schedule
+   Note: By default the schedule was just starting nginx
+```
+
+2. Create a Dockerfile in your project and copy your code into container.
+```
+   docker-compose up -d 
+```
 3. Visit http://localhost:80 and your page.
 
 ### Nginx ENV Variables
