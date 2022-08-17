@@ -1,4 +1,4 @@
-# Nginx + ModSecurity + Crontab Scheduler on Docker 
+# Nginx + ModSecurity + Cron Scheduler on Docker 
 
 ![image](https://www.nginx.com/wp-content/uploads/2017/08/blog-fm-2017-modsecurity-featured-500x300.png)
 
