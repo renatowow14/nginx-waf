@@ -1,4 +1,4 @@
-# Nginx + ModSecurity + Cron Scheduler on Docker 
+# Nginx + ModSecurity + Cron Scheduler on Docker  [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/renatowow14/nginx-waf/blob/main/LICENSE)
 
 ![image](https://www.nginx.com/wp-content/uploads/2017/08/blog-fm-2017-modsecurity-featured-500x300.png)
 
