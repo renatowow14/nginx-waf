@@ -10,10 +10,9 @@ ARG MODSEC_VERSION=3.0.7 \
     LMDB_VERSION=0.9.29 \
     SSDEEP_VERSION=2.14.1
 
-RUN set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        automake \
+RUN set -eux && \
+    apt-get update && \
+    apt-get install -y automake \
         cmake \
         doxygen \
         g++ \
@@ -167,9 +166,8 @@ ENV ACCESSLOG=/var/log/nginx/access.log \
 COPY ./src/etc/cron.d/crontab /etc/cron.d/hello-cron
 COPY ./src/etc/cron.d/entrypoint.sh /APP/entrypoint.sh
 
-RUN set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update && \
+        apt-get install -y \
         ca-certificates \
         libcurl4-gnutls-dev \
         liblua5.3 \
@@ -177,24 +175,23 @@ RUN set -eux; \
         cron \  
         systemd \
         moreutils; \
-    rm -rf /var/lib/apt/lists/*; \
-    apt-get clean; \
-    mkdir /etc/nginx/ssl; \
-    mkdir -p /tmp/modsecurity/data; \
-    mkdir -p /tmp/modsecurity/upload; \
-    mkdir -p /tmp/modsecurity/tmp; \
-    mkdir -p /usr/local/modsecurity; \
-    chown -R nginx:nginx /tmp/modsecurity && \ 
-    #Personalized:
-    chmod 0644 /etc/cron.d/hello-cron && touch /var/log/cron.log && \
-    adduser --system --no-create-home --shell /bin/false --group --disabled-login nginx && \
-    mkdir -p /var/log/nginx && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    echo "43 6 * * * certbot renew --post-hook "/etc/init.d/nginx reload"" >> /etc/crontab && \
-    rm -rfv /var/log/nginx/access.log &&  rm -rfv /var/log/nginx/error.log && \ 
-    touch /var/log/nginx/access.log &&  touch /var/log/nginx/error.log && \
-    chown -R www-data:www-data /var/log/nginx && \
-    echo "America/Sao_Paulo" > /etc/timezone  
+        rm -rf /var/lib/apt/lists/*; \
+        apt-get clean; \
+        mkdir /etc/nginx/ssl; \
+        mkdir -p /tmp/modsecurity/data; \
+        mkdir -p /tmp/modsecurity/upload; \
+        mkdir -p /tmp/modsecurity/tmp; \
+        mkdir -p /usr/local/modsecurity; \
+        chown -R nginx:nginx /tmp/modsecurity && \ 
+        chmod 0644 /etc/cron.d/hello-cron && touch /var/log/cron.log && \
+        adduser --system --no-create-home --shell /bin/false --group --disabled-login nginx && \
+        mkdir -p /var/log/nginx && \
+        apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+        echo "43 6 * * * certbot renew --post-hook "/etc/init.d/nginx reload"" >> /etc/crontab && \
+        rm -rfv /var/log/nginx/access.log &&  rm -rfv /var/log/nginx/error.log && \ 
+        touch /var/log/nginx/access.log &&  touch /var/log/nginx/error.log && \
+        chown -R www-data:www-data /var/log/nginx && \
+        echo "America/Sao_Paulo" > /etc/timezone
 
 
 COPY --from=build /usr/local/modsecurity/lib/libmodsecurity.so.${MODSEC_VERSION} /usr/local/modsecurity/lib/
@@ -207,6 +204,8 @@ COPY --from=build /usr/share/TLS/server.crt /etc/nginx/conf/server.crt
 COPY --from=build /usr/share/TLS/dhparam-* /etc/ssl/certs/
 COPY --from=build /etc/modsecurity.d/unicode.mapping /etc/modsecurity.d/unicode.mapping
 COPY --from=build /etc/modsecurity.d/modsecurity.conf /etc/modsecurity.d/modsecurity.conf
+COPY --from=build /usr/lib /usr/lib
+COPY --from=build /usr/sbin/ /usr/sbin/
 COPY /v3-nginx/templates /etc/nginx/templates/
 COPY /src/etc/modsecurity.d/modsecurity-override.conf /etc/nginx/templates/modsecurity.d/modsecurity-override.conf.template
 COPY /src/etc/modsecurity.d/setup.conf /etc/nginx/templates/modsecurity.d/setup.conf.template
@@ -222,7 +221,8 @@ RUN set -eux; \
     ln -s /usr/local/lib/libyajl.so.${YAJL_VERSION} /usr/local/lib/libyajl.so.2; \
     chgrp -R 0 /var/cache/nginx/ /var/log/ /var/run/ /usr/share/nginx/ /etc/nginx/ /etc/modsecurity.d/; \
     chmod -R g=u /var/cache/nginx/ /var/log/ /var/run/ /usr/share/nginx/ /etc/nginx/ /etc/modsecurity.d/ && \
-    chmod +x /APP/entrypoint.sh
+    chmod +x /APP/entrypoint.sh  && \
+    rm -rfv /etc/crontab
 
 #https://coreruleset.org/installation/
 #Install and Configure CoreRuleSet
@@ -234,6 +234,7 @@ RUN set -eux; \
       ca-certificates \
       curl \
       vim \
+      cron \
       htop \
       wget \
       screen \
