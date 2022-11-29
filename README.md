@@ -116,3 +116,6 @@ https://github.com/coreruleset/modsecurity-docker
  ``` 
 https://github.com/coreruleset/coreruleset
  ```
+ ```
+ https://github.com/coreruleset/modsecurity-crs-docker
+ ```
