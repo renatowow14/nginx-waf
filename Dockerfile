@@ -167,12 +167,11 @@ COPY ./src/etc/cron.d/crontab /etc/cron.d/hello-cron
 COPY ./src/etc/cron.d/entrypoint.sh /APP/entrypoint.sh
 
 RUN apt-get update && \
-        apt-get install -y \
+        apt-get install -y --no-install-recommends \
         ca-certificates \
         libcurl4-gnutls-dev \
         liblua5.3 \
-        libxml2 \
-        cron \  
+        libxml2 \ 
         systemd \
         moreutils; \
         rm -rf /var/lib/apt/lists/*; \
@@ -249,7 +248,8 @@ RUN set -eux; \
     gpg --verify coreruleset-${RELEASE}.tar.gz.asc v${RELEASE}.tar.gz; \
     tar -zxf v${RELEASE}.tar.gz --strip-components=1 -C /opt/owasp-crs; \
     rm -f v${RELEASE}.tar.gz coreruleset-${RELEASE}.tar.gz.asc; \
-    mv -v /opt/owasp-crs/crs-setup.conf.example /opt/owasp-crs/crs-setup.conf
+    mv -v /opt/owasp-crs/crs-setup.conf.example /opt/owasp-crs/crs-setup.conf && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
 # overridden variables
 ENV USER=nginx \
@@ -270,6 +270,8 @@ COPY src/etc/modsecurity.d/setup.conf /etc/nginx/templates/modsecurity.d/setup.c
 COPY v3-nginx/docker-entrypoint.d/*.sh /docker-entrypoint.d/
 COPY src/opt/modsecurity/activate-rules.sh /docker-entrypoint.d/95-activate-rules.sh
 COPY src/etc/nginx/nginx.conf /etc/nginx/templates/nginx.conf.template
+COPY src/etc/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY src/etc/nginx/virtualhost-example.conf /etc/nginx/conf.d/virtualhost-example 
 
 RUN  set -eux; ln -sv /opt/owasp-crs /etc/modsecurity.d/ && bash -c "/docker-entrypoint.sh nginx"
 

@@ -7,6 +7,9 @@ services:
       context: .
       dockerfile: Dockerfile
     command: bash -c "/usr/sbin/cron -f && /bin/bash"  
+    container_name: nginx-server
+    hostname: nginx-server
+    restart: always
     environment:
       PORT: "80"
       SSL_PORT: "443"
@@ -17,6 +20,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    expose:
+      - '80'
+      - '443'
     volumes:
       - '/etc/localtime:/etc/localtime'
       - './src/etc/nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:rw'
